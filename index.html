@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键：让移动端获得正确像素比 -->
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>bu8 Invisible Ink</title>
+
+    <!-- ===============  公共变量  =============== -->
+    <style>
+        :root{
+            --accent:#0366d6;
+            --success:#2ea44f;
+            --danger:#e33c29;
+            --bg:#f6f8fa;
+            --card:#ffffff;
+            --text:#24292e;
+            --muted:#586069;
+            --border:#e1e4e8;
+            --radius:6px;
+            --safe-top:env(safe-area-inset-top,0px);
+            --safe-bottom:env(safe-area-inset-bottom,0px);
+            --safe-left:env(safe-area-inset-left,0px);
+            --safe-right:env(safe-area-inset-right,0px);
+        }
+        *{box-sizing:border-box}
+        body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent}
+        /* 默认隐藏移动端/桌面端区块，媒体查询里再显示 */
+        .mobile-only,.pc-only{display:none}
+    </style>
+
+    <!-- ===============  桌面版样式（>768px）  =============== -->
+    <style media="screen and (min-width:769px)">
+        .pc-only{display:block}
+        body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+        .pc-container{
+            background:var(--card);
+            border-radius:var(--radius);
+            box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+            padding:20px;
+            width:100%;
+            max-width:1080px;
+            border-left:.34em solid #eaecef;
+        }
+        h1{color:var(--accent);font-size:1.5em;margin:0 0 15px;text-align:center}
+        .description{color:var(--muted);font-size:.9em;text-align:center;margin-bottom:20px}
+        .section-title{font-size:1.1em;color:var(--accent);margin-bottom:10px}
+        textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius);resize:vertical;min-height:150px;font-family:inherit;margin-bottom:10px}
+        button{background:var(--success);color:#fff;border:none;border-radius:var(--radius);padding:8px 16px;font-size:.9em;margin-right:10px;cursor:pointer;transition:background .2s}
+        button:hover{background:#2c974b}
+        .button-group{display:flex;flex-wrap:wrap;justify-content:space-between}
+        .error,.success{font-size:.8em;margin-top:5px;display:none}
+        .error{color:var(--danger)}.success{color:var(--success)}
+    </style>
+
+    <!-- ===============  移动端样式（≤768px）  =============== -->
+    <style media="screen and (max-width:768px)">
+        .mobile-only{display:block}
+        body{align-items:flex-start;padding:var(--safe-top) var(--safe-right) 0 var(--safe-left)}
+        .mobile-container{width:100%;max-width:480px;padding:20px;padding-bottom:calc(20px + var(--safe-bottom))}
+        h1{font-size:1.4rem;margin:0 0 8px;text-align:center;color:var(--accent)}
+        .description{font-size:.85rem;line-height:1.4;margin-bottom:24px}
+        .section-title{font-size:1rem;margin:0 0 6px;color:var(--accent)}
+        textarea{width:100%;min-height:140px;font-size:1rem;padding:12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;font-family: inherit;}
+        .buttons{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+        button{width:100%;font-size:1rem;padding:14px;border-radius:var(--radius);background:#2c974b;color:#fff}
+        button:active{transform:scale(.98)}
+    </style>
+</head>
+
+<body>
+<!-- ======================================================
+     桌面版 DOM
+====================================================== -->
+<div class="pc-only">
+    <div class="pc-container">
+        <h1>bu8 Invisible Ink</h1>
+        <div class="description">
+            <p>A tiny steganographic tool that hides text inside invisible characters. Algorithm & code by maomaowjz_.</p>
+        </div>
+        <div class="input-section">
+            <div class="section-title">Input</div>
+            <textarea id="pc-input" placeholder="Enter or paste text to encode or decode"></textarea>
+            <div class="error" id="pc-error"></div>
+        </div>
+        <div class="output-section">
+            <div class="section-title">Output</div>
+            <textarea id="pc-output" placeholder="The result will be displayed here"></textarea>
+            <div class="success" id="pc-success"></div>
+        </div>
+        <div class="button-group">
+            <button data-action="encode" data-target="pc">Encode</button>
+            <button data-action="decode" data-target="pc">Decode</button>
+            <button data-action="copy"   data-target="pc">Copy result</button>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================
+     移动端 DOM
+====================================================== -->
+<div class="mobile-only">
+    <div class="mobile-container">
+        <h1>bu8 Invisible Ink</h1>
+        <p class="description">
+            A tiny steganographic tool that hides text inside invisible characters.<br>
+            Algorithm &amp; code by maomaowjz_.
+        </p>
+
+        <div class="input-section">
+            <div class="section-title">Input</div>
+            <textarea id="mobile-input" placeholder="Enter or paste text to encode or decode"></textarea>
+            <div class="error" id="mobile-error"></div>
+        </div>
+
+        <div class="output-section">
+            <div class="section-title">Output</div>
+            <textarea id="mobile-output" placeholder="The result will be displayed here"></textarea>
+            <div class="success" id="mobile-success"></div>
+        </div>
+
+        <div class="buttons">
+            <button data-action="encode" data-target="mobile">Encode</button>
+            <button data-action="decode" data-target="mobile">Decode</button>
+            <button data-action="copy"   data-target="mobile">Copy result</button>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================
+     公共 JS（只做一次）
+====================================================== -->
+<script>
+    const bu8_chars=['\u200b','\u200c','\u200d','\u200e','\u200f','\u2060','\ufeff','\u180e'];
+    function bu8_encode(data){
+        const byteData=new TextEncoder().encode(data);
+        let binaryStr='';
+        for(const b of byteData) binaryStr+=b.toString(2).padStart(8,'0');
+        const groups=[];
+        for(let i=0;i<binaryStr.length;i+=3) groups.push(binaryStr.substr(i,3));
+        if(groups.length&&groups.at(-1).length<3) groups[groups.length-1]=groups.at(-1).padEnd(3,'0');
+        return groups.map(g=>bu8_chars[parseInt(g,2)]).join('');
+    }
+    function bu8_decode(encodedData){
+        if(encodedData==='') return '';
+        for(const ch of encodedData) if(!bu8_chars.includes(ch)) throw new Error('Invalid cipher!');
+        const idxs=[...encodedData].map(ch=>bu8_chars.indexOf(ch));
+        let binaryStr='';
+        for(const i of idxs) binaryStr+=i.toString(2).padStart(3,'0');
+        const bytes=[];
+        for(let i=0;i<binaryStr.length;i+=8){
+            const b=binaryStr.substr(i,8);
+            if(b.length===8) bytes.push(parseInt(b,2));
+        }
+        try{return new TextDecoder('utf-8',{fatal:true}).decode(new Uint8Array(bytes));}
+        catch{throw new Error('Failed...');}
+    }
+    function copyToClipboard(text){
+        navigator.clipboard.writeText(text).then(()=>show('success','Copied!'),()=>show('error','Failed...'));
+    }
+    function show(type,msg,target){
+        const el=document.getElementById(`${target}-${type}`);
+        el.textContent=msg; el.style.display='block';
+        setTimeout(()=>el.style.display='none',2000);
+    }
+    // 统一事件委托
+    document.addEventListener('click',e=>{
+        const btn=e.target.closest('button[data-action]');
+        if(!btn) return;
+        const action=btn.dataset.action;
+        const target=btn.dataset.target;                 // 'pc' or 'mobile'
+        const inputEl=document.getElementById(`${target}-input`);
+        const outputEl=document.getElementById(`${target}-output`);
+        const input=inputEl.value;
+        try{
+            switch(action){
+                case 'encode':
+                    outputEl.value=bu8_encode(input);
+                    show('success','Success!',target);
+                    break;
+                case 'decode':
+                    outputEl.value=bu8_decode(input);
+                    show('success','Success!',target);
+                    break;
+                case 'copy':
+                    if(!outputEl.value){show('error','Nothing to copy!',target);return}
+                    copyToClipboard(outputEl.value);
+                    show('success','Copied!',target);
+                    break;
+            }
+        }catch(err){
+            show('error',err.message,target);
+        }
+    });
+</script>
+</body>
+</html>
